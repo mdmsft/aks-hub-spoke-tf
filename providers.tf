@@ -12,8 +12,11 @@ terraform {
 }
 
 locals {
-  resource_suffix = "${var.project}-${var.environment}-${var.region}"
-  context_name    = "${var.project}-${var.environment}"
+  resource_suffixes = {
+    hub   = "${var.project}-${var.environment}-${var.hub_location}"
+    spoke = "${var.project}-${var.environment}-${var.spoke_location}"
+  }
+  context_name = "${var.project}-${var.environment}"
 }
 
 provider "azurerm" {

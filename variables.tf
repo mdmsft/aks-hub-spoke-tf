@@ -3,16 +3,6 @@ variable "project" {
   default = "contoso"
 }
 
-variable "location" {
-  type    = string
-  default = "westeurope"
-}
-
-variable "region" {
-  type    = string
-  default = "weu"
-}
-
 variable "environment" {
   type    = string
   default = "dev"
@@ -26,9 +16,24 @@ variable "subscription_id" {
   type = string
 }
 
-variable "address_space" {
+variable "hub_location" {
   type    = string
-  default = "172.29.255.0/24"
+  default = "westeurope"
+}
+
+variable "spoke_location" {
+  type    = string
+  default = "northeurope"
+}
+
+variable "hub_address_space" {
+  type    = string
+  default = "192.168.0.0/24"
+}
+
+variable "spoke_address_space" {
+  type    = string
+  default = "192.168.1.0/24"
 }
 
 variable "key_vault_soft_delete_retention_days" {
@@ -38,7 +43,7 @@ variable "key_vault_soft_delete_retention_days" {
 
 variable "kubernetes_cluster_orchestrator_version" {
   type    = string
-  default = "1.24.0"
+  default = "1.24.3"
 }
 
 variable "kubernetes_cluster_sku_tier" {
@@ -48,12 +53,12 @@ variable "kubernetes_cluster_sku_tier" {
 
 variable "kubernetes_cluster_automatic_channel_upgrade" {
   type    = string
-  default = "stable"
+  default = "rapid"
 }
 
 variable "kubernetes_cluster_azure_policy_enabled" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "kubernetes_cluster_service_cidr" {
@@ -73,7 +78,7 @@ variable "kubernetes_cluster_default_node_pool_vm_size" {
 
 variable "kubernetes_cluster_default_node_pool_max_pods" {
   type    = number
-  default = 10
+  default = 30
 }
 
 variable "kubernetes_cluster_default_node_pool_min_count" {
@@ -124,7 +129,7 @@ variable "kubernetes_cluster_workload_node_pool_vm_size" {
 
 variable "kubernetes_cluster_workload_node_pool_max_pods" {
   type    = number
-  default = 10
+  default = 30
 }
 
 variable "kubernetes_cluster_workload_node_pool_min_count" {
@@ -190,7 +195,7 @@ variable "kubernetes_cluster_network_policy" {
 
 variable "kubernetes_cluster_open_service_mesh_enabled" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "log_analytics_workspace_daily_quota_gb" {

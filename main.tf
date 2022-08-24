@@ -1,12 +1,24 @@
-resource "azurerm_resource_group" "main" {
-  name     = "rg-${local.resource_suffix}"
-  location = var.location
+resource "azurerm_resource_group" "hub" {
+  name     = "rg-${local.resource_suffixes.hub}"
+  location = var.hub_location
 
   tags = {
-    project     = var.project
-    environment = var.environment
-    location    = var.location
-    tool        = "terraform"
+    role = "hub"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+resource "azurerm_resource_group" "spoke" {
+  name     = "rg-${local.resource_suffixes.spoke}"
+  location = var.spoke_location
+
+  tags = {
+    role = "spoke"
   }
 
   lifecycle {

@@ -1,13 +1,7 @@
-locals {
-  subnets = [
-    azurerm_subnet.cluster.id
-  ]
-}
-
 resource "azurerm_kubernetes_cluster" "main" {
   name                              = "aks-${local.context_name}"
-  location                          = azurerm_resource_group.main.location
-  resource_group_name               = azurerm_resource_group.main.name
+  location                          = azurerm_resource_group.spoke.location
+  resource_group_name               = azurerm_resource_group.spoke.name
   dns_prefix                        = local.context_name
   automatic_channel_upgrade         = var.kubernetes_cluster_automatic_channel_upgrade
   role_based_access_control_enabled = true
@@ -16,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   kubernetes_version                = var.kubernetes_cluster_orchestrator_version
   local_account_disabled            = true
   oidc_issuer_enabled               = true
-  node_resource_group               = "rg-${local.resource_suffix}-aks"
+  node_resource_group               = "rg-${local.resource_suffixes.spoke}-aks"
   sku_tier                          = var.kubernetes_cluster_sku_tier
 
   azure_active_directory_role_based_access_control {
@@ -49,7 +43,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   oms_agent {
-    log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.spoke.id
   }
 
   network_profile {
@@ -66,7 +60,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   microsoft_defender {
-    log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.spoke.id
   }
 }
 
@@ -99,9 +93,8 @@ resource "azurerm_role_assignment" "client_cluster_admin" {
 }
 
 resource "azurerm_role_assignment" "cluster_network_contributor" {
-  count                = length(local.subnets)
   role_definition_name = "Network Contributor"
-  scope                = local.subnets[count.index]
+  scope                = azurerm_subnet.cluster.id
   principal_id         = azurerm_kubernetes_cluster.main.identity.0.principal_id
 }
 
